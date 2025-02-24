@@ -59,6 +59,12 @@ public:
 private:
 
     juce::AudioProcessorValueTreeState treeState;
+    // instance of DelayLine called mDelayLine
+    juce::dsp::DelayLine<float> mDelayLine{ 22050 };
+
+    //retrieve values from delay time and feedback controls
+    float mDelayTime = 1000.0f;
+    float mFeedback = 0.3f;
 
 
     //==============================================================================

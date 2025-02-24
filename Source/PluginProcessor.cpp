@@ -97,8 +97,14 @@ void SimpleDelayAudioProcessor::changeProgramName (int index, const juce::String
 //==============================================================================
 void SimpleDelayAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+    //set up process spec and pass to the DelayLIne prepareToPlay function 
+    juce::dsp::ProcessSpec spec;
+    spec.sampleRate = sampleRate;
+    spec.maximumBlockSize = samplesPerBlock;
+    spec.numChannels = getTotalNumOutputChannels();
 
-
+    mDelayLine.reset();
+    mDelayLine.prepare(spec);
 }
 
 void SimpleDelayAudioProcessor::releaseResources()
@@ -157,8 +163,14 @@ void SimpleDelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
     {
         auto* channelData = buffer.getWritePointer (channel);
 
-        // do something to the data...
-
+        // loops around buffer 
+        for (int i = 0; i < buffer.getNumSamples(); i++)
+        {
+            float in = channelData[i]; // 1. retrieve input sample value & assign to variable called 'in'
+            float temp = mDelayLine.popSample(channel, mDelayTime); // 2. pop (read value) sample from delayLine buffer & assign to variable 'temp' 
+            mDelayLine.pushSample(channel, in + (temp * mFeedback)); // 3. push (write value) sample to delay line buffer. value is in () and equates to input audio sample (in) summed with delayed sample (temp) then scaled by feedback amount
+            channelData[i] = (in + temp) * 0.5f; //4. write to buffer. writing delayed sample summed with input sample. as no dry/wet saceled by 0.5 to avoid signal overload
+        }
     }
 }
 
@@ -197,7 +209,13 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 // Function called when parameter is changed
 void SimpleDelayAudioProcessor::parameterChanged(const juce::String& parameterID, float newValue)
 {
-
-
-
+    //assign control values to local class variables
+    if (parameterID == "DelayTime")
+    {
+        mDelayTime = newValue;
+    }
+    else if (parameterID == "feedback")
+    {
+        mFeedback = newValue;
+    }
 }
