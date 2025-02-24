@@ -166,7 +166,7 @@ void SimpleDelayAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, 
         // loops around buffer 
         for (int i = 0; i < buffer.getNumSamples(); i++)
         {
-            float in = channelData[i]; // 1. retrieve input sample value & assign to variable called 'in'
+            float in = channelData[i]; // 1.  retrieve input sample value & assign to variable called 'in'
             float temp = mDelayLine.popSample(channel, mDelayTime); // 2. pop (read value) sample from delayLine buffer & assign to variable 'temp' 
             mDelayLine.pushSample(channel, in + (temp * mFeedback)); // 3. push (write value) sample to delay line buffer. value is in () and equates to input audio sample (in) summed with delayed sample (temp) then scaled by feedback amount
             channelData[i] = (in + temp) * 0.5f; //4. write to buffer. writing delayed sample summed with input sample. as no dry/wet saceled by 0.5 to avoid signal overload
