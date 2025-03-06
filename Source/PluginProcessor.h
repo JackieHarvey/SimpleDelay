@@ -65,7 +65,7 @@ private:
     //retrieve values from delay time and feedback controls
     float mDelayTime = 1000.0f;
     float mFeedback = 0.3f;
-
+//test to see if xcode and mac works in github
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SimpleDelayAudioProcessor)
